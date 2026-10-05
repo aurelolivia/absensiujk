@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../reusable/app_theme.dart';
 
 import 'package:geocoding/geocoding.dart';
 
@@ -22,13 +23,13 @@ class AttendanceScreen extends StatefulWidget {
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
 
-  static const Color bgColor = Color(0xFFFFF7FA);
+  static Color get bgColor => AppPalette.bg;
 
-  static const Color cardColor = Color(0xFFFFEAF1);
+  static Color get cardColor => AppPalette.card;
 
-  static const Color accentColor = Color(0xFFE89AB7);
+  static Color get accentColor => AppPalette.accent;
 
-  static const Color accentLight = Color(0xFFD96F96);
+  static Color get accentLight => AppPalette.accentLight;
 
   Position? currentPosition;
 
@@ -42,7 +43,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   String locationAddress = 'Mendeteksi lokasi...';
 
-  final Geocoding geocoding = Geocoding(locale: const Locale('id', 'ID'));
+  final Geocoding geocoding = Geocoding(locale: Locale('id', 'ID'));
 
   @override
 
@@ -204,7 +205,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
 
-        const SnackBar(content: Text('Lokasi GPS belum tersedia')),
+        SnackBar(content: Text('Lokasi GPS belum tersedia')),
 
       );
 
@@ -226,7 +227,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
 
-          const SnackBar(content: Text('Token login tidak ditemukan')),
+          SnackBar(content: Text('Token login tidak ditemukan')),
 
         );
 
@@ -252,7 +253,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
         ScaffoldMessenger.of(context)
 
-            .showSnackBar(const SnackBar(content: Text('Check In berhasil')));
+            .showSnackBar(SnackBar(content: Text('Check In berhasil')));
 
         Navigator.pop(context);
 
@@ -296,7 +297,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
 
-        const SnackBar(content: Text('Lokasi GPS belum tersedia')),
+        SnackBar(content: Text('Lokasi GPS belum tersedia')),
 
       );
 
@@ -318,7 +319,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
 
-          const SnackBar(content: Text('Token login tidak ditemukan')),
+          SnackBar(content: Text('Token login tidak ditemukan')),
 
         );
 
@@ -344,7 +345,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
         ScaffoldMessenger.of(context)
 
-            .showSnackBar(const SnackBar(content: Text('Check Out berhasil')));
+            .showSnackBar(SnackBar(content: Text('Check Out berhasil')));
 
         Navigator.pop(context);
 
@@ -380,7 +381,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
 
-        const SnackBar(content: Text('Lokasi GPS belum tersedia')),
+        SnackBar(content: Text('Lokasi GPS belum tersedia')),
 
       );
 
@@ -404,13 +405,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
           ),
 
-          title: const Text(
+          title: Text(
 
             'Izin Sakit',
 
             style: TextStyle(
 
-              color: Color(0xFF54283A),
+              color: AppPalette.textPrimary,
 
               fontWeight: FontWeight.w900,
 
@@ -418,13 +419,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
           ),
 
-          content: const Text(
+          content: Text(
 
             'Apakah kamu yakin ingin mengajukan '
 
             'izin sakit hari ini?',
 
-            style: TextStyle(color: Color(0xFF9E7180)),
+            style: TextStyle(color: AppPalette.textSecondary),
 
           ),
 
@@ -438,11 +439,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
               },
 
-              child: const Text(
+              child: Text(
 
                 'Batal',
 
-                style: TextStyle(color: Color(0xFF9E7180)),
+                style: TextStyle(color: AppPalette.textSecondary),
 
               ),
 
@@ -458,13 +459,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
               style: ElevatedButton.styleFrom(
 
-                backgroundColor: Color(0xFFE58BA6),
+                backgroundColor: AppPalette.snack,
 
-                foregroundColor: Color(0xFF54283A),
+                foregroundColor: AppPalette.textPrimary,
 
               ),
 
-              child: const Text('Ajukan'),
+              child: Text('Ajukan'),
 
             ),
 
@@ -496,7 +497,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
 
-          const SnackBar(content: Text('Token login tidak ditemukan')),
+          SnackBar(content: Text('Token login tidak ditemukan')),
 
         );
 
@@ -522,7 +523,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
 
-          const SnackBar(content: Text('Izin sakit berhasil diajukan')),
+          SnackBar(content: Text('Izin sakit berhasil diajukan')),
 
         );
 
@@ -568,15 +569,21 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
       context,
 
-      MaterialPageRoute(builder: (_) => const GoogleMapsScreenDay19()),
+      MaterialPageRoute(builder: (_) => GoogleMapsScreenDay19()),
 
     );
 
   }
 
   @override
-
   Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: ThemeController.isDarkMode,
+      builder: (context, _, __) => _buildThemed(context),
+    );
+  }
+
+  Widget _buildThemed(BuildContext context) {
 
     return Scaffold(
 
@@ -598,11 +605,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
           },
 
-          icon: const Icon(
+          icon: Icon(
 
             Icons.arrow_back_ios_new_rounded,
 
-            color: Color(0xFF54283A),
+            color: AppPalette.textPrimary,
 
             size: 19,
 
@@ -610,13 +617,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
         ),
 
-        title: const Text(
+        title: Text(
 
           'Kehadiran',
 
           style: TextStyle(
 
-            color: Color(0xFF54283A),
+            color: AppPalette.textPrimary,
 
             fontSize: 20,
 
@@ -630,7 +637,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
       body: SingleChildScrollView(
 
-        padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
+        padding: EdgeInsets.fromLTRB(20, 10, 20, 30),
 
         child: Column(
 
@@ -640,23 +647,23 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
             _buildHeader(),
 
-            const SizedBox(height: 22),
+            SizedBox(height: 22),
 
             _buildLocationCard(),
 
-            const SizedBox(height: 13),
+            SizedBox(height: 13),
 
             _buildMapButton(),
 
-            const SizedBox(height: 27),
+            SizedBox(height: 27),
 
-            const Text(
+            Text(
 
               'Aksi Absensi',
 
               style: TextStyle(
 
-                color: Color(0xFF54283A),
+                color: AppPalette.textPrimary,
 
                 fontSize: 19,
 
@@ -666,15 +673,15 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
             ),
 
-            const SizedBox(height: 5),
+            SizedBox(height: 5),
 
-            const Text(
+            Text(
 
               'Pilih aktivitas yang ingin kamu lakukan',
 
               style: TextStyle(
 
-                color: Color(0xFF9E7180),
+                color: AppPalette.textSecondary,
 
                 fontSize: 11,
 
@@ -682,7 +689,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
             ),
 
-            const SizedBox(height: 14),
+            SizedBox(height: 14),
 
             Row(
 
@@ -698,7 +705,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                     backgroundColor: accentColor,
 
-                    foregroundColor: Color(0xFF54283A),
+                    foregroundColor: AppPalette.textPrimary,
 
                     loading: isCheckInLoading,
 
@@ -714,7 +721,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                 ),
 
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
 
                 Expanded(
 
@@ -724,9 +731,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                     icon: Icons.logout_rounded,
 
-                    backgroundColor: const Color(0xFFF3A6BD),
+                    backgroundColor: AppPalette.soft,
 
-                    foregroundColor: Color(0xFF54283A),
+                    foregroundColor: AppPalette.textPrimary,
 
                     loading: isCheckOutLoading,
 
@@ -746,11 +753,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
             ),
 
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
 
             _buildIzinButton(),
 
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
             _buildLocationStatus(),
 
@@ -768,7 +775,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
     final now = DateTime.now();
 
-    const months = [
+    final months = [
 
       'Januari',
 
@@ -802,13 +809,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
       children: [
 
-        const Text(
+        Text(
 
           'Absensi Hari Ini',
 
           style: TextStyle(
 
-            color: Color(0xFF54283A),
+            color: AppPalette.textPrimary,
 
             fontSize: 27,
 
@@ -818,15 +825,15 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
         ),
 
-        const SizedBox(height: 5),
+        SizedBox(height: 5),
 
         Text(
 
           '${now.day} ${months[now.month - 1]} ${now.year}',
 
-          style: const TextStyle(
+          style: TextStyle(
 
-            color: Color(0xFF9E7180),
+            color: AppPalette.textSecondary,
 
             fontSize: 12,
 
@@ -846,7 +853,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
       width: double.infinity,
 
-      padding: const EdgeInsets.all(19),
+      padding: EdgeInsets.all(19),
 
       decoration: BoxDecoration(
 
@@ -868,7 +875,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
             blurRadius: 25,
 
-            offset: const Offset(0, 10),
+            offset: Offset(0, 10),
 
           ),
 
@@ -900,7 +907,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                 ),
 
-                child: const Icon(
+                child: Icon(
 
                   Icons.location_on_rounded,
 
@@ -912,9 +919,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
               ),
 
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
 
-              const Expanded(
+              Expanded(
 
                 child: Column(
 
@@ -928,7 +935,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                       style: TextStyle(
 
-                        color: Color(0xFF54283A),
+                        color: AppPalette.textPrimary,
 
                         fontSize: 16,
 
@@ -946,7 +953,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                       style: TextStyle(
 
-                        color: Color(0xFF9E7180),
+                        color: AppPalette.textSecondary,
 
                         fontSize: 10,
 
@@ -966,7 +973,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                 icon: isLoading
 
-                    ? const SizedBox(
+                    ? SizedBox(
 
                         width: 18,
 
@@ -982,7 +989,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                       )
 
-                    : const Icon(
+                    : Icon(
 
                         Icons.refresh_rounded,
 
@@ -996,17 +1003,17 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
           ),
 
-          const SizedBox(height: 17),
+          SizedBox(height: 17),
 
           Container(
 
             width: double.infinity,
 
-            padding: const EdgeInsets.all(15),
+            padding: EdgeInsets.all(15),
 
             decoration: BoxDecoration(
 
-              color: Color(0xFF54283A).withValues(alpha: 0.16),
+              color: AppPalette.textPrimary.withValues(alpha: 0.16),
 
               borderRadius: BorderRadius.circular(17),
 
@@ -1018,7 +1025,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
               children: [
 
-                const Icon(
+                Icon(
 
                   Icons.place_rounded,
 
@@ -1028,7 +1035,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                 ),
 
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
 
                 Expanded(
 
@@ -1038,13 +1045,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                     children: [
 
-                      const Text(
+                      Text(
 
                         'ALAMAT TERDETEKSI',
 
                         style: TextStyle(
 
-                          color: Color(0xFF9E7180),
+                          color: AppPalette.textSecondary,
 
                           fontSize: 8,
 
@@ -1054,7 +1061,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                       ),
 
-                      const SizedBox(height: 5),
+                      SizedBox(height: 5),
 
                       Text(
 
@@ -1064,9 +1071,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                         overflow: TextOverflow.ellipsis,
 
-                        style: const TextStyle(
+                        style: TextStyle(
 
-                          color: Color(0xFF54283A),
+                          color: AppPalette.textPrimary,
 
                           fontSize: 12,
 
@@ -1090,7 +1097,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
           if (currentPosition != null) ...[
 
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
 
             Row(
 
@@ -1108,7 +1115,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                 ),
 
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
 
                 Expanded(
 
@@ -1140,7 +1147,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
     return Container(
 
-      padding: const EdgeInsets.symmetric(
+      padding: EdgeInsets.symmetric(
 
         horizontal: 12,
 
@@ -1166,9 +1173,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
             title,
 
-            style: const TextStyle(
+            style: TextStyle(
 
-              color: Color(0xFF9E7180),
+              color: AppPalette.textSecondary,
 
               fontSize: 8,
 
@@ -1176,13 +1183,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
           ),
 
-          const SizedBox(height: 3),
+          SizedBox(height: 3),
 
           Text(
 
             value,
 
-            style: const TextStyle(
+            style: TextStyle(
 
               color: accentLight,
 
@@ -1214,9 +1221,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
         onPressed: openMap,
 
-        icon: const Icon(Icons.map_rounded, size: 19),
+        icon: Icon(Icons.map_rounded, size: 19),
 
-        label: const Text(
+        label: Text(
 
           'Lihat Lokasi Saya di Peta',
 
@@ -1316,13 +1323,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                   Icon(icon, size: 20),
 
-                  const SizedBox(width: 7),
+                  SizedBox(width: 7),
 
                   Text(
 
                     title,
 
-                    style: const TextStyle(
+                    style: TextStyle(
 
                       fontWeight: FontWeight.w900,
 
@@ -1358,7 +1365,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
         icon: isIzinLoading
 
-            ? const SizedBox(
+            ? SizedBox(
 
                 width: 18,
 
@@ -1366,7 +1373,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                 child: CircularProgressIndicator(
 
-                  color: Color(0xFFE58BA6),
+                  color: AppPalette.snack,
 
                   strokeWidth: 2,
 
@@ -1374,7 +1381,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
               )
 
-            : const Icon(Icons.sick_rounded),
+            : Icon(Icons.sick_rounded),
 
         label: Text(
 
@@ -1384,11 +1391,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
         style: OutlinedButton.styleFrom(
 
-          foregroundColor: Color(0xFFE58BA6),
+          foregroundColor: AppPalette.snack,
 
           side: BorderSide(
 
-            color: Color(0xFFE58BA6).withValues(alpha: 0.35),
+            color: AppPalette.snack.withValues(alpha: 0.35),
 
           ),
 
@@ -1414,7 +1421,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
       width: double.infinity,
 
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
 
       decoration: BoxDecoration(
 
@@ -1422,7 +1429,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
             ? accentColor.withValues(alpha: 0.07)
 
-            : Color(0xFF54283A).withValues(alpha: 0.04),
+            : AppPalette.textPrimary.withValues(alpha: 0.04),
 
         borderRadius: BorderRadius.circular(18),
 
@@ -1432,7 +1439,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
               ? accentColor.withValues(alpha: 0.18)
 
-              : Color(0xFF54283A).withValues(alpha: 0.06),
+              : AppPalette.textPrimary.withValues(alpha: 0.06),
 
         ),
 
@@ -1456,7 +1463,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                   ? accentColor.withValues(alpha: 0.12)
 
-                  : Color(0xFF54283A).withValues(alpha: 0.06),
+                  : AppPalette.textPrimary.withValues(alpha: 0.06),
 
             ),
 
@@ -1464,13 +1471,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
               success ? Icons.check_rounded : Icons.location_searching_rounded,
 
-              color: success ? accentLight : Color(0xFF9E7180),
+              color: success ? accentLight : AppPalette.textSecondary,
 
             ),
 
           ),
 
-          const SizedBox(width: 11),
+          SizedBox(width: 11),
 
           Expanded(
 
@@ -1484,9 +1491,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                   success ? 'Lokasi berhasil ditemukan' : 'Mencari lokasi...',
 
-                  style: const TextStyle(
+                  style: TextStyle(
 
-                    color: Color(0xFF54283A),
+                    color: AppPalette.textPrimary,
 
                     fontWeight: FontWeight.w800,
 
@@ -1496,7 +1503,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                 ),
 
-                const SizedBox(height: 3),
+                SizedBox(height: 3),
 
                 Text(
 
@@ -1506,9 +1513,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
                       : 'Mohon tunggu sebentar',
 
-                  style: const TextStyle(
+                  style: TextStyle(
 
-                    color: Color(0xFF9E7180),
+                    color: AppPalette.textSecondary,
 
                     fontSize: 10,
 

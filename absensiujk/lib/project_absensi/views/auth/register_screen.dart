@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:absensiujk/project_absensi/reusable/app_theme.dart';
 
 import 'package:dio/dio.dart';
 
@@ -60,7 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           content: Text(
             response.data['message'] ?? 'Registrasi berhasil',
           ),
-          backgroundColor: const Color(0xFFE89AB7),
+          backgroundColor: AppPalette.accent,
         ),
       );
 
@@ -85,7 +86,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(message),
-          backgroundColor: const Color(0xFFE58BA6),
+          backgroundColor: AppPalette.snack,
         ),
       );
     } catch (e) {
@@ -94,7 +95,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Terjadi kesalahan: $e'),
-          backgroundColor: const Color(0xFFE58BA6),
+          backgroundColor: AppPalette.snack,
         ),
       );
     } finally {
@@ -108,69 +109,76 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: ThemeController.isDarkMode,
+      builder: (context, _, __) => _buildThemed(context),
+    );
+  }
+
+  Widget _buildThemed(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF7FA),
+      backgroundColor: AppPalette.bg,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
+            padding: EdgeInsets.symmetric(
               horizontal: 24,
               vertical: 20,
             ),
             child: Form(
               key: _formKey,
               child: Container(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFEAF1),
+                  color: AppPalette.card,
                   borderRadius: BorderRadius.circular(22),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
+                    Text(
                       'Create Account',
                       style: TextStyle(
-                        color: Color(0xFF54283A),
+                        color: AppPalette.textPrimary,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
 
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
 
-                    const Text(
+                    Text(
                       'Register Your\nAccount',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Color(0xFF9E7180),
+                        color: AppPalette.textSecondary,
                         fontSize: 14,
                       ),
                     ),
 
-                    const SizedBox(height: 30),
+                    SizedBox(height: 30),
 
                     // Nama
                     TextFormField(
                       controller: nameController,
 
                       // Warna tulisan yang diketik
-                      style: const TextStyle(
-                        color: Color(0xFF54283A),
+                      style: TextStyle(
+                        color: AppPalette.textPrimary,
                       ),
 
                       decoration: InputDecoration(
                         hintText: 'Nama',
 
                         // Warna placeholder
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF8A5268),
+                        hintStyle: TextStyle(
+                          color: AppPalette.hint,
                         ),
 
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: AppPalette.field,
 
-                        contentPadding: const EdgeInsets.symmetric(
+                        contentPadding: EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
                         ),
@@ -190,7 +198,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                     ),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
 
                     // Email
                     TextFormField(
@@ -198,22 +206,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       keyboardType: TextInputType.emailAddress,
 
                       // Warna tulisan yang diketik
-                      style: const TextStyle(
-                        color: Color(0xFF54283A),
+                      style: TextStyle(
+                        color: AppPalette.textPrimary,
                       ),
 
                       decoration: InputDecoration(
                         hintText: 'Email',
 
                         // Warna placeholder
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF8A5268),
+                        hintStyle: TextStyle(
+                          color: AppPalette.hint,
                         ),
 
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: AppPalette.field,
 
-                        contentPadding: const EdgeInsets.symmetric(
+                        contentPadding: EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
                         ),
@@ -237,7 +245,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                     ),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
 
                     // Password
                     TextFormField(
@@ -245,22 +253,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       obscureText: !isPasswordVisible,
 
                       // Warna tulisan password yang diketik
-                      style: const TextStyle(
-                        color: Color(0xFF54283A),
+                      style: TextStyle(
+                        color: AppPalette.textPrimary,
                       ),
 
                       decoration: InputDecoration(
                         hintText: 'Kata Sandi',
 
                         // Warna placeholder
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF8A5268),
+                        hintStyle: TextStyle(
+                          color: AppPalette.hint,
                         ),
 
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: AppPalette.field,
 
-                        contentPadding: const EdgeInsets.symmetric(
+                        contentPadding: EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
                         ),
@@ -270,7 +278,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             isPasswordVisible
                                 ? Icons.visibility
                                 : Icons.visibility_off,
-                            color: const Color(0xFFE89AB7),
+                            color: AppPalette.accent,
                           ),
                           onPressed: () {
                             setState(() {
@@ -295,7 +303,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                     ),
 
-                    const SizedBox(height: 28),
+                    SizedBox(height: 28),
 
                     // Tombol Register
                     SizedBox(
@@ -305,7 +313,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         onPressed: isLoading ? null : register,
 
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFE89AB7),
+                          backgroundColor: AppPalette.accent,
                           foregroundColor: Colors.white,
 
                           shape: RoundedRectangleBorder(
@@ -314,7 +322,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
 
                         child: isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 22,
                                 height: 22,
                                 child: CircularProgressIndicator(
@@ -322,7 +330,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   strokeWidth: 2,
                                 ),
                               )
-                            : const Text(
+                            : Text(
                                 'Register',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -331,17 +339,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
 
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
 
-                      child: const Text(
+                      child: Text(
                         'Sudah punya akun? Login',
                         style: TextStyle(
-                          color: Color(0xFFD96F96),
+                          color: AppPalette.accentLight,
                         ),
                       ),
                     ),

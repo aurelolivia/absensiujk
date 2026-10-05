@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../reusable/app_theme.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -9,6 +10,7 @@ import '../../services/storage_services.dart';
 import '../attendance/attendance_screen.dart';
 import '../attendance/history_screen.dart';
 import '../profile/profile_screen.dart';
+import '../../reusable/live_clock_card.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -22,11 +24,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // WARNA
   // =========================
 
-  static const Color bgColor = Color(0xFFFFF7FA);
-  static const Color cardColor = Color(0xFFFFEAF1);
-  static const Color cardColor2 = Color(0xFFFFF1F5);
-  static const Color accentColor = Color(0xFFE89AB7);
-  static const Color accentLight = Color(0xFFD96F96);
+  static Color get bgColor => AppPalette.bg;
+  static Color get cardColor => AppPalette.card;
+  static Color get cardColor2 => AppPalette.card2;
+  static Color get accentColor => AppPalette.accent;
+  static Color get accentLight => AppPalette.accentLight;
 
   // =========================
   // DATA
@@ -49,7 +51,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   GoogleMapController? mapController;
 
   final LatLng defaultLocation =
-      const LatLng(-6.2000, 106.816666);
+      LatLng(-6.2000, 106.816666);
 
   @override
   void initState() {
@@ -228,7 +230,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       // Ambil posisi GPS terbaru
       final position =
           await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
+        locationSettings: LocationSettings(
           accuracy: LocationAccuracy.high,
         ),
       );
@@ -274,7 +276,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   int get totalAttendance {
     return attendanceList.where((item) {
-      return item.status?.toLowerCase() == 'masuk';
+      return item.status.toLowerCase() == 'masuk';
     }).length;
   }
 
@@ -287,7 +289,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   int get totalIzinSakit {
     return attendanceList.where((item) {
-      return item.status?.toLowerCase() == 'izin';
+      return item.status.toLowerCase() == 'izin';
     }).length;
   }
 
@@ -297,7 +299,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
 
     final status =
-        todayAttendance!.status?.toLowerCase();
+        todayAttendance!.status.toLowerCase();
 
     if (status == 'izin') {
       return 'Izin Sakit';
@@ -357,14 +359,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return {
       Marker(
         markerId:
-            const MarkerId('currentLocation'),
+            MarkerId('currentLocation'),
 
         position: LatLng(
           currentPosition!.latitude,
           currentPosition!.longitude,
         ),
 
-        infoWindow: const InfoWindow(
+        infoWindow: InfoWindow(
           title: 'Lokasi Saya',
           snippet: 'PPKD JU',
         ),
@@ -380,7 +382,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const AttendanceScreen(),
+        builder: (_) => AttendanceScreen(),
       ),
     );
   }
@@ -389,7 +391,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const HistoryScreen(),
+        builder: (_) => HistoryScreen(),
       ),
     );
   }
@@ -398,7 +400,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const ProfileScreen(),
+        builder: (_) => ProfileScreen(),
       ),
     );
   }
@@ -409,6 +411,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: ThemeController.isDarkMode,
+      builder: (context, _, __) => _buildThemed(context),
+    );
+  }
+
+  Widget _buildThemed(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
 
@@ -424,9 +433,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
           child: SingleChildScrollView(
             physics:
-                const AlwaysScrollableScrollPhysics(),
+                AlwaysScrollableScrollPhysics(),
 
-            padding: const EdgeInsets.fromLTRB(
+            padding: EdgeInsets.fromLTRB(
               20,
               16,
               20,
@@ -441,12 +450,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 // HEADER
                 _buildHeader(),
 
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
+
+                // JAM DIGITAL (FITUR BARU)
+                LiveClockCard(),
+
+                SizedBox(height: 14),
 
                 // WELCOME / BUKA ABSENSI
                 _buildWelcomeCard(),
 
-                const SizedBox(height: 22),
+                SizedBox(height: 22),
 
                 // STATISTIK
                 _buildSectionTitle(
@@ -454,11 +468,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   'Ringkasan kehadiran kamu',
                 ),
 
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
 
                 _buildStatistics(),
 
-                const SizedBox(height: 22),
+                SizedBox(height: 22),
 
                 // ABSENSI HARI INI
                 _buildSectionTitle(
@@ -466,11 +480,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   'Status kehadiran hari ini',
                 ),
 
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
 
                 _buildTodayAttendance(),
 
-                const SizedBox(height: 22),
+                SizedBox(height: 22),
 
                 // RIWAYAT
                 _buildSectionTitle(
@@ -478,11 +492,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   'Absensi terbaru kamu',
                 ),
 
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
 
                 _buildHistoryHeader(),
 
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
 
                 if (attendanceList.isEmpty)
                   _buildEmptyHistory()
@@ -492,7 +506,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       .map(
                         (item) => Padding(
                           padding:
-                              const EdgeInsets.only(
+                              EdgeInsets.only(
                             bottom: 10,
                           ),
                           child:
@@ -503,7 +517,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 if (attendanceList.length > 3)
                   _buildSeeAllButton(),
 
-                const SizedBox(height: 22),
+                SizedBox(height: 22),
 
                 // LOKASI
                 _buildSectionTitle(
@@ -511,11 +525,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   'Lokasi GPS perangkat kamu',
                 ),
 
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
 
                 _buildLocationCard(),
 
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
 
                 _buildMapPreview(),
               ],
@@ -545,20 +559,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Text(
           title,
 
-          style: const TextStyle(
-            color: Color(0xFF54283A),
+          style: TextStyle(
+            color: AppPalette.textPrimary,
             fontSize: 17,
             fontWeight: FontWeight.w800,
           ),
         ),
 
-        const SizedBox(height: 3),
+        SizedBox(height: 3),
 
         Text(
           subtitle,
 
           style: TextStyle(
-            color: const Color(0xFF9E7180)
+            color: AppPalette.textSecondary
                 .withValues(alpha: 0.75),
 
             fontSize: 11,
@@ -588,13 +602,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 BorderRadius.circular(16),
 
             gradient:
-                const LinearGradient(
+                LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
 
               colors: [
-                Color(0xFFE89AB7),
-                Color(0xFFD96F96),
+                AppPalette.accent,
+                AppPalette.accentLight,
               ],
             ),
 
@@ -606,7 +620,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                 blurRadius: 15,
 
-                offset: const Offset(0, 7),
+                offset: Offset(0, 7),
               ),
             ],
           ),
@@ -615,7 +629,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: Text(
               initial,
 
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
                 fontSize: 19,
                 fontWeight: FontWeight.w900,
@@ -624,7 +638,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
 
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
 
         Expanded(
           child: Column(
@@ -636,14 +650,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 'Selamat datang 👋',
 
                 style: TextStyle(
-                  color: const Color(0xFF9E7180)
+                  color: AppPalette.textSecondary
                       .withValues(alpha: 0.80),
 
                   fontSize: 11,
                 ),
               ),
 
-              const SizedBox(height: 2),
+              SizedBox(height: 2),
 
               Text(
                 userName,
@@ -653,8 +667,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 overflow:
                     TextOverflow.ellipsis,
 
-                style: const TextStyle(
-                  color: Color(0xFF54283A),
+                style: TextStyle(
+                  color: AppPalette.textPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                 ),
@@ -670,12 +684,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
             backgroundColor: cardColor,
 
             padding:
-                const EdgeInsets.all(10),
+                EdgeInsets.all(10),
           ),
 
-          icon: const Icon(
+          icon: Icon(
             Icons.person_outline_rounded,
-            color: Color(0xFF54283A),
+            color: AppPalette.textPrimary,
             size: 21,
           ),
         ),
@@ -724,20 +738,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       width: double.infinity,
 
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
 
       decoration: BoxDecoration(
         borderRadius:
             BorderRadius.circular(24),
 
         gradient:
-            const LinearGradient(
+            LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
 
           colors: [
-            Color(0xFFFFDCE8),
-            Color(0xFFFFEAF1),
+            AppPalette.chip,
+            AppPalette.card,
           ],
         ),
 
@@ -755,7 +769,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             blurRadius: 20,
 
-            offset: const Offset(0, 9),
+            offset: Offset(0, 9),
           ),
         ],
       ),
@@ -772,9 +786,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   dateText,
 
                   style: TextStyle(
-                    color: const Color(
-                      0xFF9E7180,
-                    ).withValues(
+                    color: AppPalette.textSecondary.withValues(
                       alpha: 0.90,
                     ),
 
@@ -787,7 +799,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
               Container(
                 padding:
-                    const EdgeInsets.symmetric(
+                    EdgeInsets.symmetric(
                   horizontal: 9,
                   vertical: 5,
                 ),
@@ -804,7 +816,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
 
-                child: const Row(
+                child: Row(
                   mainAxisSize:
                       MainAxisSize.min,
 
@@ -836,33 +848,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ],
           ),
 
-          const SizedBox(height: 15),
+          SizedBox(height: 15),
 
-          const Text(
-            'Tetap semangat hari ini!',
+          Text(
+            'SHOW UP AND SLAY TODAY',
 
             style: TextStyle(
-              color: Color(0xFF54283A),
+              color: AppPalette.textPrimary,
               fontSize: 21,
               fontWeight: FontWeight.w900,
             ),
           ),
 
-          const SizedBox(height: 5),
+          SizedBox(height: 5),
 
           Text(
-            'Jangan lupa lakukan absensi '
-            'sesuai kondisi kamu.',
-
+            'clock in now, clock out later. DONT MIISS IT!',
+           
             style: TextStyle(
-              color: const Color(0xFF9E7180)
+              color: AppPalette.textSecondary
                   .withValues(alpha: 0.90),
 
               fontSize: 12,
             ),
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
 
           SizedBox(
             width: double.infinity,
@@ -870,13 +881,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: ElevatedButton.icon(
               onPressed: openAttendance,
 
-              icon: const Icon(
+              icon: Icon(
                 Icons.fingerprint_rounded,
                 size: 19,
               ),
 
               label:
-                  const Text('Buka Absensi'),
+                  Text('Buka Absensi'),
 
               style:
                   ElevatedButton.styleFrom(
@@ -889,7 +900,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Colors.white,
 
                 padding:
-                    const EdgeInsets.symmetric(
+                    EdgeInsets.symmetric(
                   vertical: 13,
                 ),
 
@@ -925,7 +936,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
 
-        const SizedBox(width: 9),
+        SizedBox(width: 9),
 
         Expanded(
           child: _buildStatCard(
@@ -937,7 +948,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
 
-        const SizedBox(width: 9),
+        SizedBox(width: 9),
 
         Expanded(
           child: _buildStatCard(
@@ -959,7 +970,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }) {
     return Container(
       padding:
-          const EdgeInsets.all(13),
+          EdgeInsets.all(13),
 
       decoration: BoxDecoration(
         color: cardColor,
@@ -968,9 +979,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             BorderRadius.circular(18),
 
         border: Border.all(
-          color: const Color(
-            0xFFB98B9B,
-          ).withValues(
+          color: AppPalette.divider.withValues(
             alpha: 0.20,
           ),
         ),
@@ -1004,27 +1013,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
 
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
 
           Text(
             value,
 
-            style: const TextStyle(
-              color: Color(0xFF54283A),
+            style: TextStyle(
+              color: AppPalette.textPrimary,
               fontSize: 20,
               fontWeight: FontWeight.w900,
             ),
           ),
 
-          const SizedBox(height: 2),
+          SizedBox(height: 2),
 
           Text(
             title,
 
             style: TextStyle(
-              color: const Color(
-                0xFF9E7180,
-              ).withValues(
+              color: AppPalette.textSecondary.withValues(
                 alpha: 0.75,
               ),
 
@@ -1051,7 +1058,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       width: double.infinity,
 
       padding:
-          const EdgeInsets.all(16),
+          EdgeInsets.all(16),
 
       decoration: BoxDecoration(
         color: cardColor,
@@ -1060,9 +1067,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             BorderRadius.circular(20),
 
         border: Border.all(
-          color: const Color(
-            0xFFB98B9B,
-          ).withValues(
+          color: AppPalette.divider.withValues(
             alpha: 0.20,
           ),
         ),
@@ -1080,14 +1085,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       alpha: 0.12,
                     )
                   : isIzin
-                      ? const Color(
-                          0xFFE58BA6,
-                        ).withValues(
+                      ? AppPalette.snack.withValues(
                           alpha: 0.12,
                         )
-                      : const Color(
-                          0xFFB98B9B,
-                        ).withValues(
+                      : AppPalette.divider.withValues(
                           alpha: 0.20,
                         ),
 
@@ -1107,18 +1108,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
               color: isHadir
                   ? accentLight
                   : isIzin
-                      ? const Color(
-                          0xFFE58BA6,
-                        )
-                      : const Color(
-                          0xFF9E7180,
-                        ),
+                      ? AppPalette.snack
+                      : AppPalette.textSecondary,
 
               size: 21,
             ),
           ),
 
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
 
           Expanded(
             child: Column(
@@ -1126,18 +1123,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   CrossAxisAlignment.start,
 
               children: [
-                const Text(
+                Text(
                   'Status Hari Ini',
 
                   style: TextStyle(
-                    color: Color(0xFF54283A),
+                    color: AppPalette.textPrimary,
                     fontWeight:
                         FontWeight.w700,
                     fontSize: 13,
                   ),
                 ),
 
-                const SizedBox(height: 3),
+                SizedBox(height: 3),
 
                 Text(
                   todayAttendance == null
@@ -1145,9 +1142,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       : 'Data absensi hari ini tersedia.',
 
                   style: TextStyle(
-                    color: const Color(
-                      0xFF9E7180,
-                    ).withValues(
+                    color: AppPalette.textSecondary.withValues(
                       alpha: 0.75,
                     ),
 
@@ -1160,7 +1155,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
           Container(
             padding:
-                const EdgeInsets.symmetric(
+                EdgeInsets.symmetric(
               horizontal: 10,
               vertical: 6,
             ),
@@ -1171,14 +1166,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       alpha: 0.12,
                     )
                   : isIzin
-                      ? const Color(
-                          0xFFE58BA6,
-                        ).withValues(
+                      ? AppPalette.snack.withValues(
                           alpha: 0.12,
                         )
-                      : const Color(
-                          0xFFB98B9B,
-                        ).withValues(
+                      : AppPalette.divider.withValues(
                           alpha: 0.20,
                         ),
 
@@ -1195,12 +1186,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 color: isHadir
                     ? accentLight
                     : isIzin
-                        ? const Color(
-                            0xFFE58BA6,
-                          )
-                        : const Color(
-                            0xFF9E7180,
-                          ),
+                        ? AppPalette.snack
+                        : AppPalette.textSecondary,
 
                 fontSize: 10,
 
@@ -1223,7 +1210,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       width: double.infinity,
 
       padding:
-          const EdgeInsets.all(15),
+          EdgeInsets.all(15),
 
       decoration: BoxDecoration(
         color: cardColor,
@@ -1256,14 +1243,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
 
-            child: const Icon(
+            child: Icon(
               Icons.location_on_rounded,
               color: accentLight,
               size: 21,
             ),
           ),
 
-          const SizedBox(width: 11),
+          SizedBox(width: 11),
 
           Expanded(
             child: Column(
@@ -1271,26 +1258,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   CrossAxisAlignment.start,
 
               children: [
-                const Text(
+                Text(
                   'Lokasi Saat Ini',
 
                   style: TextStyle(
-                    color: Color(0xFF54283A),
+                    color: AppPalette.textPrimary,
                     fontWeight:
                         FontWeight.w800,
                     fontSize: 13,
                   ),
                 ),
 
-                const SizedBox(height: 3),
+                SizedBox(height: 3),
 
                 Text(
                   locationAddress,
 
                   style: TextStyle(
-                    color: const Color(
-                      0xFF9E7180,
-                    ).withValues(
+                    color: AppPalette.textSecondary.withValues(
                       alpha: 0.85,
                     ),
 
@@ -1302,7 +1287,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
 
           if (isLocationLoading)
-            const SizedBox(
+            SizedBox(
               width: 19,
               height: 19,
 
@@ -1321,12 +1306,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               padding: EdgeInsets.zero,
 
               constraints:
-                  const BoxConstraints(
+                  BoxConstraints(
                 minWidth: 36,
                 minHeight: 36,
               ),
 
-              icon: const Icon(
+              icon: Icon(
                 Icons.refresh_rounded,
                 color: accentLight,
                 size: 20,
@@ -1424,7 +1409,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             child: Container(
               padding:
-                  const EdgeInsets
+                  EdgeInsets
                       .symmetric(
                 horizontal: 10,
                 vertical: 7,
@@ -1449,7 +1434,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ),
 
-              child: const Row(
+              child: Row(
                 mainAxisSize:
                     MainAxisSize.min,
 
@@ -1467,7 +1452,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                     style: TextStyle(
                       color:
-                          Color(0xFF54283A),
+                          AppPalette.textPrimary,
 
                       fontSize: 11,
 
@@ -1519,7 +1504,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   }
                 },
 
-                child: const Padding(
+                child: Padding(
                   padding:
                       EdgeInsets.all(10),
 
@@ -1551,9 +1536,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           '${attendanceList.length} data absensi',
 
           style: TextStyle(
-            color: const Color(
-              0xFF9E7180,
-            ).withValues(
+            color: AppPalette.textSecondary.withValues(
               alpha: 0.70,
             ),
 
@@ -1561,7 +1544,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
 
-        const Spacer(),
+        Spacer(),
 
         if (attendanceList.isNotEmpty)
           TextButton(
@@ -1569,13 +1552,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             style: TextButton.styleFrom(
               padding:
-                  const EdgeInsets.symmetric(
+                  EdgeInsets.symmetric(
                 horizontal: 4,
                 vertical: 2,
               ),
             ),
 
-            child: const Text(
+            child: Text(
               'Lihat Semua',
 
               style: TextStyle(
@@ -1598,14 +1581,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     AttendanceModel item,
   ) {
     final isIzin =
-        item.status?.toLowerCase() ==
+        item.status.toLowerCase() ==
             'izin';
 
     return Container(
       width: double.infinity,
 
       padding:
-          const EdgeInsets.all(15),
+          EdgeInsets.all(15),
 
       decoration: BoxDecoration(
         color: cardColor,
@@ -1614,9 +1597,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             BorderRadius.circular(19),
 
         border: Border.all(
-          color: const Color(
-            0xFFB98B9B,
-          ).withValues(
+          color: AppPalette.divider.withValues(
             alpha: 0.20,
           ),
         ),
@@ -1633,9 +1614,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 decoration:
                     BoxDecoration(
                   color: isIzin
-                      ? const Color(
-                          0xFFE58BA6,
-                        ).withValues(
+                      ? AppPalette.snack.withValues(
                           alpha: 0.12,
                         )
                       : accentColor
@@ -1656,16 +1635,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       : Icons.check_rounded,
 
                   color: isIzin
-                      ? const Color(
-                          0xFFE58BA6,
-                        )
+                      ? AppPalette.snack
                       : accentLight,
 
                   size: 20,
                 ),
               ),
 
-              const SizedBox(width: 11),
+              SizedBox(width: 11),
 
               Expanded(
                 child: Column(
@@ -1680,9 +1657,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
 
                       style:
-                          const TextStyle(
+                          TextStyle(
                         color:
-                            Color(0xFF54283A),
+                            AppPalette.textPrimary,
 
                         fontSize: 13,
 
@@ -1691,7 +1668,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
 
-                    const SizedBox(
+                    SizedBox(
                       height: 3,
                     ),
 
@@ -1702,9 +1679,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                       style: TextStyle(
                         color:
-                            const Color(
-                          0xFF9E7180,
-                        ).withValues(
+                            AppPalette.textSecondary.withValues(
                           alpha: 0.75,
                         ),
 
@@ -1717,7 +1692,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
               Container(
                 padding:
-                    const EdgeInsets
+                    EdgeInsets
                         .symmetric(
                   horizontal: 9,
                   vertical: 5,
@@ -1726,9 +1701,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 decoration:
                     BoxDecoration(
                   color: isIzin
-                      ? const Color(
-                          0xFFE58BA6,
-                        ).withValues(
+                      ? AppPalette.snack.withValues(
                           alpha: 0.12,
                         )
                       : accentColor
@@ -1747,9 +1720,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                   style: TextStyle(
                     color: isIzin
-                        ? const Color(
-                            0xFFE58BA6,
-                          )
+                        ? AppPalette.snack
                         : accentLight,
 
                     fontSize: 9,
@@ -1762,7 +1733,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ],
           ),
 
-          const SizedBox(height: 13),
+          SizedBox(height: 13),
 
           Row(
             children: [
@@ -1783,9 +1754,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 height: 28,
 
                 color:
-                    const Color(
-                  0xFFB98B9B,
-                ).withValues(
+                    AppPalette.divider.withValues(
                   alpha: 0.20,
                 ),
               ),
@@ -1815,7 +1784,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }) {
     return Padding(
       padding:
-          const EdgeInsets.symmetric(
+          EdgeInsets.symmetric(
         horizontal: 7,
       ),
 
@@ -1827,7 +1796,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             color: accentLight,
           ),
 
-          const SizedBox(width: 6),
+          SizedBox(width: 6),
 
           Column(
             crossAxisAlignment:
@@ -1838,9 +1807,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 title,
 
                 style: TextStyle(
-                  color: const Color(
-                    0xFF9E7180,
-                  ).withValues(
+                  color: AppPalette.textSecondary.withValues(
                     alpha: 0.70,
                   ),
 
@@ -1848,13 +1815,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ),
 
-              const SizedBox(height: 2),
+              SizedBox(height: 2),
 
               Text(
                 value,
 
-                style: const TextStyle(
-                  color: Color(0xFF54283A),
+                style: TextStyle(
+                  color: AppPalette.textPrimary,
                   fontSize: 11,
                   fontWeight:
                       FontWeight.w700,
@@ -1876,7 +1843,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       width: double.infinity,
 
       padding:
-          const EdgeInsets.all(23),
+          EdgeInsets.all(23),
 
       decoration: BoxDecoration(
         color: cardColor,
@@ -1890,29 +1857,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Icon(
             Icons.history_rounded,
 
-            color: const Color(
-              0xFF9E7180,
-            ).withValues(
+            color: AppPalette.textSecondary.withValues(
               alpha: 0.55,
             ),
 
             size: 36,
           ),
 
-          const SizedBox(height: 9),
+          SizedBox(height: 9),
 
-          const Text(
+          Text(
             'Belum ada riwayat absensi',
 
             style: TextStyle(
-              color: Color(0xFF54283A),
+              color: AppPalette.textPrimary,
               fontWeight:
                   FontWeight.w700,
               fontSize: 13,
             ),
           ),
 
-          const SizedBox(height: 3),
+          SizedBox(height: 3),
 
           Text(
             'Data absensi kamu akan muncul di sini.',
@@ -1921,9 +1886,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 TextAlign.center,
 
             style: TextStyle(
-              color: const Color(
-                0xFF9E7180,
-              ).withValues(
+              color: AppPalette.textSecondary.withValues(
                 alpha: 0.70,
               ),
 
@@ -1959,7 +1922,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
 
           padding:
-              const EdgeInsets.symmetric(
+              EdgeInsets.symmetric(
             vertical: 11,
           ),
 
@@ -1972,7 +1935,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
 
-        child: const Text(
+        child: Text(
           'Lihat Semua Riwayat',
 
           style: TextStyle(
@@ -1997,9 +1960,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
         border: Border(
           top: BorderSide(
-            color: const Color(
-              0xFFB98B9B,
-            ).withValues(
+            color: AppPalette.divider.withValues(
               alpha: 0.20,
             ),
           ),
@@ -2009,7 +1970,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: SafeArea(
         child: Padding(
           padding:
-              const EdgeInsets.symmetric(
+              EdgeInsets.symmetric(
             horizontal: 15,
             vertical: 7,
           ),
@@ -2067,7 +2028,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       child: Padding(
         padding:
-            const EdgeInsets.symmetric(
+            EdgeInsets.symmetric(
           vertical: 6,
         ),
 
@@ -2083,14 +2044,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
               color: active
                   ? accentLight
-                  : const Color(
-                      0xFF9E7180,
-                    ).withValues(
+                  : AppPalette.textSecondary.withValues(
                       alpha: 0.65,
                     ),
             ),
 
-            const SizedBox(height: 3),
+            SizedBox(height: 3),
 
             Text(
               label,
@@ -2098,9 +2057,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               style: TextStyle(
                 color: active
                     ? accentLight
-                    : const Color(
-                        0xFF9E7180,
-                      ).withValues(
+                    : AppPalette.textSecondary.withValues(
                         alpha: 0.65,
                       ),
 

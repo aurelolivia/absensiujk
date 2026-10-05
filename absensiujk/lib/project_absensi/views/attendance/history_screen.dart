@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../reusable/app_theme.dart';
 
 import '../../models/attendance_model.dart';
 
@@ -18,13 +19,13 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
 
-  static const Color bgColor = Color(0xFFFFF7FA);
+  static Color get bgColor => AppPalette.bg;
 
-  static const Color cardColor = Color(0xFFFFEAF1);
+  static Color get cardColor => AppPalette.card;
 
-  static const Color accentColor = Color(0xFFE89AB7);
+  static Color get accentColor => AppPalette.accent;
 
-  static const Color accentLight = Color(0xFFD96F96);
+  static Color get accentLight => AppPalette.accentLight;
 
   List<AttendanceModel> history = [];
 
@@ -126,7 +127,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
       final dateTime = DateTime.parse(value);
 
-      const months = [
+      final months = [
 
         'JAN',
 
@@ -201,8 +202,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   @override
-
   Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: ThemeController.isDarkMode,
+      builder: (context, _, __) => _buildThemed(context),
+    );
+  }
+
+  Widget _buildThemed(BuildContext context) {
 
     return Scaffold(
 
@@ -224,11 +231,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
           },
 
-          icon: const Icon(
+          icon: Icon(
 
             Icons.arrow_back_ios_new_rounded,
 
-            color: Color(0xFF54283A),
+            color: AppPalette.textPrimary,
 
             size: 19,
 
@@ -236,7 +243,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
         ),
 
-        title: const Column(
+        title: Column(
 
           crossAxisAlignment: CrossAxisAlignment.start,
 
@@ -248,7 +255,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
               style: TextStyle(
 
-                color: Color(0xFF54283A),
+                color: AppPalette.textPrimary,
 
                 fontSize: 20,
 
@@ -266,7 +273,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
               style: TextStyle(
 
-                color: Color(0xFF9E7180),
+                color: AppPalette.textSecondary,
 
                 fontSize: 10,
 
@@ -286,7 +293,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
             onPressed: getHistory,
 
-            icon: const Icon(
+            icon: Icon(
 
               Icons.refresh_rounded,
 
@@ -302,7 +309,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
       body: isLoading
 
-          ? const Center(
+          ? Center(
 
               child: CircularProgressIndicator(
 
@@ -326,9 +333,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
               child: ListView.builder(
 
-                physics: const AlwaysScrollableScrollPhysics(),
+                physics: AlwaysScrollableScrollPhysics(),
 
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 30),
+                padding: EdgeInsets.fromLTRB(16, 12, 16, 30),
 
                 itemCount: history.length,
 
@@ -352,15 +359,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     final statusColor = izin
 
-        ? const Color(0xFFE58BA6)
+        ? AppPalette.snack
 
         : accentLight;
 
     return Container(
 
-      margin: const EdgeInsets.only(bottom: 15),
+      margin: EdgeInsets.only(bottom: 15),
 
-      padding: const EdgeInsets.all(18),
+      padding: EdgeInsets.all(18),
 
       decoration: BoxDecoration(
 
@@ -370,7 +377,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
         border: Border.all(
 
-          color: const Color(0xFF54283A).withValues(alpha: 0.06),
+          color: AppPalette.textPrimary.withValues(alpha: 0.06),
 
         ),
 
@@ -418,7 +425,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
               ),
 
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
 
               Expanded(
 
@@ -432,9 +439,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
                       formatDate(item.checkIn ?? item.createdAt),
 
-                      style: const TextStyle(
+                      style: TextStyle(
 
-                        color: Color(0xFF54283A),
+                        color: AppPalette.textPrimary,
 
                         fontSize: 16,
 
@@ -444,15 +451,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
                     ),
 
-                    const SizedBox(height: 5),
+                    SizedBox(height: 5),
 
                     Text(
 
                       formatTime(item.checkIn ?? item.createdAt),
 
-                      style: const TextStyle(
+                      style: TextStyle(
 
-                        color: Color(0xFF9E7180),
+                        color: AppPalette.textSecondary,
 
                         fontSize: 11,
 
@@ -470,7 +477,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
               _statusBadge(item.status, statusColor),
 
-              const SizedBox(width: 3),
+              SizedBox(width: 3),
 
               IconButton(
 
@@ -480,11 +487,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
                 },
 
-                icon: const Icon(
+                icon: Icon(
 
                   Icons.delete_outline_rounded,
 
-                  color: Color(0xFF9E7180),
+                  color: AppPalette.textSecondary,
 
                   size: 20,
 
@@ -496,7 +503,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
           ),
 
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
 
           _buildTimeline(
 
@@ -520,7 +527,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
               icon: Icons.logout_rounded,
 
-              color: const Color(0xFFF3A6BD),
+              color: AppPalette.soft,
 
               title: 'Check Out',
 
@@ -604,9 +611,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
                   height: 55,
 
-                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  margin: EdgeInsets.symmetric(vertical: 4),
 
-                  color: const Color(0xFF9E7180).withValues(alpha: 0.18),
+                  color: AppPalette.textSecondary.withValues(alpha: 0.18),
 
                 ),
 
@@ -616,13 +623,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
         ),
 
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
 
         Expanded(
 
           child: Padding(
 
-            padding: const EdgeInsets.only(bottom: 12),
+            padding: EdgeInsets.only(bottom: 12),
 
             child: Column(
 
@@ -638,9 +645,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
                       title,
 
-                      style: const TextStyle(
+                      style: TextStyle(
 
-                        color: Color(0xFF54283A),
+                        color: AppPalette.textPrimary,
 
                         fontSize: 13,
 
@@ -650,11 +657,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
                     ),
 
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
 
                     Container(
 
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
 
                         horizontal: 8,
 
@@ -664,7 +671,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
                       decoration: BoxDecoration(
 
-                        color: const Color(0xFF54283A)
+                        color: AppPalette.textPrimary
 
                             .withValues(alpha: 0.05),
 
@@ -676,9 +683,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
                         time,
 
-                        style: const TextStyle(
+                        style: TextStyle(
 
-                          color: Color(0xFF9E7180),
+                          color: AppPalette.textSecondary,
 
                           fontSize: 9,
 
@@ -694,7 +701,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
                 ),
 
-                const SizedBox(height: 7),
+                SizedBox(height: 7),
 
                 Row(
 
@@ -702,17 +709,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
                   children: [
 
-                    const Icon(
+                    Icon(
 
                       Icons.location_on_outlined,
 
-                      color: Color(0xFFB98B9B),
+                      color: AppPalette.divider,
 
                       size: 14,
 
                     ),
 
-                    const SizedBox(width: 5),
+                    SizedBox(width: 5),
 
                     Expanded(
 
@@ -720,9 +727,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
                         location,
 
-                        style: const TextStyle(
+                        style: TextStyle(
 
-                          color: Color(0xFF9E7180),
+                          color: AppPalette.textSecondary,
 
                           fontSize: 10,
 
@@ -756,7 +763,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     return Container(
 
-      padding: const EdgeInsets.symmetric(
+      padding: EdgeInsets.symmetric(
 
         horizontal: 10,
 
@@ -798,7 +805,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
       child: Padding(
 
-        padding: const EdgeInsets.all(30),
+        padding: EdgeInsets.all(30),
 
         child: Column(
 
@@ -820,7 +827,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
               ),
 
-              child: const Icon(
+              child: Icon(
 
                 Icons.history_rounded,
 
@@ -832,15 +839,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
-            const Text(
+            Text(
 
               'Belum Ada Riwayat',
 
               style: TextStyle(
 
-                color: Color(0xFF54283A),
+                color: AppPalette.textPrimary,
 
                 fontSize: 19,
 
@@ -850,9 +857,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
             ),
 
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
 
-            const Text(
+            Text(
 
               'Riwayat absensi kamu akan muncul di sini.',
 
@@ -860,7 +867,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
               style: TextStyle(
 
-                color: Color(0xFF9E7180),
+                color: AppPalette.textSecondary,
 
                 fontSize: 12,
 
@@ -896,13 +903,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
           ),
 
-          title: const Text(
+          title: Text(
 
             'Hapus Riwayat?',
 
             style: TextStyle(
 
-              color: Color(0xFF54283A),
+              color: AppPalette.textPrimary,
 
               fontWeight: FontWeight.w800,
 
@@ -910,7 +917,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
           ),
 
-          content: const Text(
+          content: Text(
 
             'Apakah kamu yakin ingin menghapus '
 
@@ -918,7 +925,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
             style: TextStyle(
 
-              color: Color(0xFF9E7180),
+              color: AppPalette.textSecondary,
 
             ),
 
@@ -934,13 +941,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
               },
 
-              child: const Text(
+              child: Text(
 
                 'Batal',
 
                 style: TextStyle(
 
-                  color: Color(0xFF9E7180),
+                  color: AppPalette.textSecondary,
 
                 ),
 
@@ -958,13 +965,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
               style: ElevatedButton.styleFrom(
 
-                backgroundColor: const Color(0xFFE58BA6),
+                backgroundColor: AppPalette.snack,
 
-                foregroundColor: const Color(0xFFFFF7FA),
+                foregroundColor: AppPalette.bg,
 
               ),
 
-              child: const Text('Hapus'),
+              child: Text('Hapus'),
 
             ),
 
@@ -982,7 +989,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
 
-        const SnackBar(
+        SnackBar(
 
           content: Text('Fitur hapus siap dihubungkan ke API DELETE.'),
 
