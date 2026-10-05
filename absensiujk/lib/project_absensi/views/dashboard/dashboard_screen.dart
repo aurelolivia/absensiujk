@@ -11,6 +11,7 @@ import '../attendance/attendance_screen.dart';
 import '../attendance/history_screen.dart';
 import '../profile/profile_screen.dart';
 import '../../reusable/live_clock_card.dart';
+import '../../reusable/attendance_calendar.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -474,6 +475,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                 SizedBox(height: 22),
 
+                // KALENDER ABSENSI (FITUR BARU)
+                _buildSectionTitle(
+                  'Kalender Absensi',
+                  'Tanggal kehadiran kamu',
+                ),
+
+                SizedBox(height: 10),
+
+                AttendanceCalendar(
+                  attendanceList: attendanceList,
+                ),
+
+                SizedBox(height: 22),
+
                 // ABSENSI HARI INI
                 _buildSectionTitle(
                   'Absensi Hari Ini',
@@ -851,7 +866,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           SizedBox(height: 15),
 
           Text(
-            'SHOW UP AND SLAY TODAY',
+            'Tetap semangat hari ini!',
 
             style: TextStyle(
               color: AppPalette.textPrimary,
@@ -863,8 +878,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           SizedBox(height: 5),
 
           Text(
-            'clock in now, clock out later. DONT MIISS IT!',
-           
+            'Jangan lupa lakukan absensi '
+            'sesuai kondisi kamu.',
+
             style: TextStyle(
               color: AppPalette.textSecondary
                   .withValues(alpha: 0.90),

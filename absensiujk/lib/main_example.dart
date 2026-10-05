@@ -1,11 +1,11 @@
 // CONTOH main.dart — gabungkan dengan main.dart kamu yang sekarang.
 // Intinya: (1) ThemeController.load() sebelum runApp,
 //          (2) MaterialApp dibungkus ValueListenableBuilder + theme/darkTheme/themeMode.
+import 'package:absensiujk/project_absensi/views/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:absensiujk/project_absensi/reusable/app_theme.dart';
-// import halaman awal kamu (splash / login / dashboard)
-import 'package:absensiujk/project_absensi/views/auth/login_screen.dart';
+// import halaman splash (logo pembuka)
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
           themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
-          home: const LoginScreen(), // ganti dengan halaman awal kamu
+          home: const LoginScreen(),
         );
       },
     );
