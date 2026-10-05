@@ -1,0 +1,997 @@
+import 'package:flutter/material.dart';
+
+import '../../models/attendance_model.dart';
+
+import '../../services/api_services.dart';
+
+import '../../services/storage_services.dart';
+
+class HistoryScreen extends StatefulWidget {
+
+  const HistoryScreen({super.key});
+
+  @override
+
+  State<HistoryScreen> createState() => _HistoryScreenState();
+
+}
+
+class _HistoryScreenState extends State<HistoryScreen> {
+
+  static const Color bgColor = Color(0xFFFFF7FA);
+
+  static const Color cardColor = Color(0xFFFFEAF1);
+
+  static const Color accentColor = Color(0xFFE89AB7);
+
+  static const Color accentLight = Color(0xFFD96F96);
+
+  List<AttendanceModel> history = [];
+
+  bool isLoading = true;
+
+  @override
+
+  void initState() {
+
+    super.initState();
+
+    getHistory();
+
+  }
+
+  Future<void> getHistory() async {
+
+    try {
+
+      final token = await StorageServices.getToken();
+
+      if (token == null) {
+
+        if (!mounted) return;
+
+        setState(() {
+
+          isLoading = false;
+
+        });
+
+        return;
+
+      }
+
+      final response = await ApiServices().getHistory(
+
+        token: token,
+
+        start: '2026-01-01',
+
+        end: '2026-12-31',
+
+      );
+
+      if (response.statusCode == 200) {
+
+        final List data = response.data['data'];
+
+        if (!mounted) return;
+
+        setState(() {
+
+          history = data.map((item) => AttendanceModel.fromJson(item)).toList();
+
+          isLoading = false;
+
+        });
+
+      } else {
+
+        if (!mounted) return;
+
+        setState(() {
+
+          isLoading = false;
+
+        });
+
+      }
+
+    } catch (e) {
+
+      if (!mounted) return;
+
+      setState(() {
+
+        isLoading = false;
+
+      });
+
+      ScaffoldMessenger.of(context)
+
+          .showSnackBar(SnackBar(content: Text('Gagal mengambil riwayat: $e')));
+
+    }
+
+  }
+
+  String formatDate(String? value) {
+
+    if (value == null || value.isEmpty) {
+
+      return '-';
+
+    }
+
+    try {
+
+      final dateTime = DateTime.parse(value);
+
+      const months = [
+
+        'JAN',
+
+        'FEB',
+
+        'MAR',
+
+        'APR',
+
+        'MEI',
+
+        'JUN',
+
+        'JUL',
+
+        'AGU',
+
+        'SEP',
+
+        'OKT',
+
+        'NOV',
+
+        'DES',
+
+      ];
+
+      return '${dateTime.day.toString().padLeft(2, '0')} '
+
+          '${months[dateTime.month - 1]} '
+
+          '${dateTime.year}';
+
+    } catch (_) {
+
+      return value;
+
+    }
+
+  }
+
+  String formatTime(String? value) {
+
+    if (value == null || value.isEmpty) {
+
+      return '-';
+
+    }
+
+    try {
+
+      final dateTime = DateTime.parse(value);
+
+      return '${dateTime.hour.toString().padLeft(2, '0')}:'
+
+          '${dateTime.minute.toString().padLeft(2, '0')}:'
+
+          '${dateTime.second.toString().padLeft(2, '0')}';
+
+    } catch (_) {
+
+      return value;
+
+    }
+
+  }
+
+  bool isPermission(String status) {
+
+    return status.toLowerCase() == 'izin';
+
+  }
+
+  @override
+
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+
+      backgroundColor: bgColor,
+
+      appBar: AppBar(
+
+        backgroundColor: bgColor,
+
+        elevation: 0,
+
+        scrolledUnderElevation: 0,
+
+        leading: IconButton(
+
+          onPressed: () {
+
+            Navigator.pop(context);
+
+          },
+
+          icon: const Icon(
+
+            Icons.arrow_back_ios_new_rounded,
+
+            color: Color(0xFF54283A),
+
+            size: 19,
+
+          ),
+
+        ),
+
+        title: const Column(
+
+          crossAxisAlignment: CrossAxisAlignment.start,
+
+          children: [
+
+            Text(
+
+              'Riwayat Absensi',
+
+              style: TextStyle(
+
+                color: Color(0xFF54283A),
+
+                fontSize: 20,
+
+                fontWeight: FontWeight.w900,
+
+              ),
+
+            ),
+
+            SizedBox(height: 2),
+
+            Text(
+
+              'Aktivitas absensi kamu',
+
+              style: TextStyle(
+
+                color: Color(0xFF9E7180),
+
+                fontSize: 10,
+
+                fontWeight: FontWeight.w500,
+
+              ),
+
+            ),
+
+          ],
+
+        ),
+
+        actions: [
+
+          IconButton(
+
+            onPressed: getHistory,
+
+            icon: const Icon(
+
+              Icons.refresh_rounded,
+
+              color: accentLight,
+
+            ),
+
+          ),
+
+        ],
+
+      ),
+
+      body: isLoading
+
+          ? const Center(
+
+              child: CircularProgressIndicator(
+
+                color: accentColor,
+
+              ),
+
+            )
+
+          : history.isEmpty
+
+          ? _buildEmptyState()
+
+          : RefreshIndicator(
+
+              color: accentColor,
+
+              backgroundColor: cardColor,
+
+              onRefresh: getHistory,
+
+              child: ListView.builder(
+
+                physics: const AlwaysScrollableScrollPhysics(),
+
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 30),
+
+                itemCount: history.length,
+
+                itemBuilder: (context, index) {
+
+                  return _buildHistoryCard(history[index]);
+
+                },
+
+              ),
+
+            ),
+
+    );
+
+  }
+
+  Widget _buildHistoryCard(AttendanceModel item) {
+
+    final izin = isPermission(item.status);
+
+    final statusColor = izin
+
+        ? const Color(0xFFE58BA6)
+
+        : accentLight;
+
+    return Container(
+
+      margin: const EdgeInsets.only(bottom: 15),
+
+      padding: const EdgeInsets.all(18),
+
+      decoration: BoxDecoration(
+
+        color: cardColor,
+
+        borderRadius: BorderRadius.circular(24),
+
+        border: Border.all(
+
+          color: const Color(0xFF54283A).withValues(alpha: 0.06),
+
+        ),
+
+      ),
+
+      child: Column(
+
+        crossAxisAlignment: CrossAxisAlignment.start,
+
+        children: [
+
+          Row(
+
+            crossAxisAlignment: CrossAxisAlignment.start,
+
+            children: [
+
+              Container(
+
+                width: 50,
+
+                height: 50,
+
+                decoration: BoxDecoration(
+
+                  color: accentColor.withValues(alpha: 0.10),
+
+                  borderRadius: BorderRadius.circular(16),
+
+                ),
+
+                child: Icon(
+
+                  izin
+
+                      ? Icons.sick_rounded
+
+                      : Icons.calendar_month_rounded,
+
+                  color: accentLight,
+
+                  size: 24,
+
+                ),
+
+              ),
+
+              const SizedBox(width: 12),
+
+              Expanded(
+
+                child: Column(
+
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children: [
+
+                    Text(
+
+                      formatDate(item.checkIn ?? item.createdAt),
+
+                      style: const TextStyle(
+
+                        color: Color(0xFF54283A),
+
+                        fontSize: 16,
+
+                        fontWeight: FontWeight.w900,
+
+                      ),
+
+                    ),
+
+                    const SizedBox(height: 5),
+
+                    Text(
+
+                      formatTime(item.checkIn ?? item.createdAt),
+
+                      style: const TextStyle(
+
+                        color: Color(0xFF9E7180),
+
+                        fontSize: 11,
+
+                        fontWeight: FontWeight.w600,
+
+                      ),
+
+                    ),
+
+                  ],
+
+                ),
+
+              ),
+
+              _statusBadge(item.status, statusColor),
+
+              const SizedBox(width: 3),
+
+              IconButton(
+
+                onPressed: () {
+
+                  _showDeleteDialog(item);
+
+                },
+
+                icon: const Icon(
+
+                  Icons.delete_outline_rounded,
+
+                  color: Color(0xFF9E7180),
+
+                  size: 20,
+
+                ),
+
+              ),
+
+            ],
+
+          ),
+
+          const SizedBox(height: 20),
+
+          _buildTimeline(
+
+            icon: Icons.login_rounded,
+
+            color: accentLight,
+
+            title: 'Check In',
+
+            time: formatTime(item.checkIn),
+
+            location: item.checkInAddress ?? item.checkInLocation ?? '-',
+
+            isLast: item.checkOut == null || item.checkOut!.isEmpty,
+
+          ),
+
+          if (item.checkOut != null && item.checkOut!.isNotEmpty)
+
+            _buildTimeline(
+
+              icon: Icons.logout_rounded,
+
+              color: const Color(0xFFF3A6BD),
+
+              title: 'Check Out',
+
+              time: formatTime(item.checkOut),
+
+              location: item.checkOutAddress ?? item.checkOutLocation ?? '-',
+
+              isLast: true,
+
+            ),
+
+        ],
+
+      ),
+
+    );
+
+  }
+
+  Widget _buildTimeline({
+
+    required IconData icon,
+
+    required Color color,
+
+    required String title,
+
+    required String time,
+
+    required String location,
+
+    required bool isLast,
+
+  }) {
+
+    return Row(
+
+      crossAxisAlignment: CrossAxisAlignment.start,
+
+      children: [
+
+        SizedBox(
+
+          width: 38,
+
+          child: Column(
+
+            children: [
+
+              Container(
+
+                width: 34,
+
+                height: 34,
+
+                decoration: BoxDecoration(
+
+                  color: color.withValues(alpha: 0.10),
+
+                  shape: BoxShape.circle,
+
+                ),
+
+                child: Icon(
+
+                  icon,
+
+                  color: color,
+
+                  size: 17,
+
+                ),
+
+              ),
+
+              if (!isLast)
+
+                Container(
+
+                  width: 2,
+
+                  height: 55,
+
+                  margin: const EdgeInsets.symmetric(vertical: 4),
+
+                  color: const Color(0xFF9E7180).withValues(alpha: 0.18),
+
+                ),
+
+            ],
+
+          ),
+
+        ),
+
+        const SizedBox(width: 12),
+
+        Expanded(
+
+          child: Padding(
+
+            padding: const EdgeInsets.only(bottom: 12),
+
+            child: Column(
+
+              crossAxisAlignment: CrossAxisAlignment.start,
+
+              children: [
+
+                Row(
+
+                  children: [
+
+                    Text(
+
+                      title,
+
+                      style: const TextStyle(
+
+                        color: Color(0xFF54283A),
+
+                        fontSize: 13,
+
+                        fontWeight: FontWeight.w800,
+
+                      ),
+
+                    ),
+
+                    const SizedBox(width: 8),
+
+                    Container(
+
+                      padding: const EdgeInsets.symmetric(
+
+                        horizontal: 8,
+
+                        vertical: 4,
+
+                      ),
+
+                      decoration: BoxDecoration(
+
+                        color: const Color(0xFF54283A)
+
+                            .withValues(alpha: 0.05),
+
+                        borderRadius: BorderRadius.circular(8),
+
+                      ),
+
+                      child: Text(
+
+                        time,
+
+                        style: const TextStyle(
+
+                          color: Color(0xFF9E7180),
+
+                          fontSize: 9,
+
+                          fontWeight: FontWeight.w700,
+
+                        ),
+
+                      ),
+
+                    ),
+
+                  ],
+
+                ),
+
+                const SizedBox(height: 7),
+
+                Row(
+
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children: [
+
+                    const Icon(
+
+                      Icons.location_on_outlined,
+
+                      color: Color(0xFFB98B9B),
+
+                      size: 14,
+
+                    ),
+
+                    const SizedBox(width: 5),
+
+                    Expanded(
+
+                      child: Text(
+
+                        location,
+
+                        style: const TextStyle(
+
+                          color: Color(0xFF9E7180),
+
+                          fontSize: 10,
+
+                          height: 1.45,
+
+                        ),
+
+                      ),
+
+                    ),
+
+                  ],
+
+                ),
+
+              ],
+
+            ),
+
+          ),
+
+        ),
+
+      ],
+
+    );
+
+  }
+
+  Widget _statusBadge(String status, Color color) {
+
+    return Container(
+
+      padding: const EdgeInsets.symmetric(
+
+        horizontal: 10,
+
+        vertical: 7,
+
+      ),
+
+      decoration: BoxDecoration(
+
+        color: color.withValues(alpha: 0.10),
+
+        borderRadius: BorderRadius.circular(30),
+
+      ),
+
+      child: Text(
+
+        status.toUpperCase(),
+
+        style: TextStyle(
+
+          color: color,
+
+          fontSize: 9,
+
+          fontWeight: FontWeight.w900,
+
+        ),
+
+      ),
+
+    );
+
+  }
+
+  Widget _buildEmptyState() {
+
+    return Center(
+
+      child: Padding(
+
+        padding: const EdgeInsets.all(30),
+
+        child: Column(
+
+          mainAxisAlignment: MainAxisAlignment.center,
+
+          children: [
+
+            Container(
+
+              width: 90,
+
+              height: 90,
+
+              decoration: BoxDecoration(
+
+                color: accentColor.withValues(alpha: 0.08),
+
+                borderRadius: BorderRadius.circular(28),
+
+              ),
+
+              child: const Icon(
+
+                Icons.history_rounded,
+
+                color: accentLight,
+
+                size: 42,
+
+              ),
+
+            ),
+
+            const SizedBox(height: 20),
+
+            const Text(
+
+              'Belum Ada Riwayat',
+
+              style: TextStyle(
+
+                color: Color(0xFF54283A),
+
+                fontSize: 19,
+
+                fontWeight: FontWeight.w900,
+
+              ),
+
+            ),
+
+            const SizedBox(height: 8),
+
+            const Text(
+
+              'Riwayat absensi kamu akan muncul di sini.',
+
+              textAlign: TextAlign.center,
+
+              style: TextStyle(
+
+                color: Color(0xFF9E7180),
+
+                fontSize: 12,
+
+              ),
+
+            ),
+
+          ],
+
+        ),
+
+      ),
+
+    );
+
+  }
+
+  Future<void> _showDeleteDialog(AttendanceModel item) async {
+
+    final result = await showDialog<bool>(
+
+      context: context,
+
+      builder: (context) {
+
+        return AlertDialog(
+
+          backgroundColor: cardColor,
+
+          shape: RoundedRectangleBorder(
+
+            borderRadius: BorderRadius.circular(22),
+
+          ),
+
+          title: const Text(
+
+            'Hapus Riwayat?',
+
+            style: TextStyle(
+
+              color: Color(0xFF54283A),
+
+              fontWeight: FontWeight.w800,
+
+            ),
+
+          ),
+
+          content: const Text(
+
+            'Apakah kamu yakin ingin menghapus '
+
+            'riwayat absensi ini?',
+
+            style: TextStyle(
+
+              color: Color(0xFF9E7180),
+
+            ),
+
+          ),
+
+          actions: [
+
+            TextButton(
+
+              onPressed: () {
+
+                Navigator.pop(context, false);
+
+              },
+
+              child: const Text(
+
+                'Batal',
+
+                style: TextStyle(
+
+                  color: Color(0xFF9E7180),
+
+                ),
+
+              ),
+
+            ),
+
+            ElevatedButton(
+
+              onPressed: () {
+
+                Navigator.pop(context, true);
+
+              },
+
+              style: ElevatedButton.styleFrom(
+
+                backgroundColor: const Color(0xFFE58BA6),
+
+                foregroundColor: const Color(0xFFFFF7FA),
+
+              ),
+
+              child: const Text('Hapus'),
+
+            ),
+
+          ],
+
+        );
+
+      },
+
+    );
+
+    if (result == true) {
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+
+        const SnackBar(
+
+          content: Text('Fitur hapus siap dihubungkan ke API DELETE.'),
+
+        ),
+
+      );
+
+    }
+
+  }
+
+}
